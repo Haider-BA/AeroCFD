@@ -1,0 +1,20 @@
+
+# UNREAL GENERATED FILES
+*/Binaries
+*/Build
+*/DerivedDataCache
+*/Intermediate
+*/Saved
+BuildingEscape/Content/StarterContent/Textures
+BuildingEscape/Content/StarterContent/*
+
+# VISUAL STUDIO GENERATED FILE
+*.VC.db*
+*.suo
+*.ipch
+BuildingEscape/.vs*
+.vs
+VC.oipendb
+*.sln
+
+*/Debug
