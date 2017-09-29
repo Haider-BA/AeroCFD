@@ -7,9 +7,6 @@
 #define OUT
 
 // Constructor
-Grid2::Grid2()
-{};
-
 Grid2::Grid2(std::string GridInputFilename) :
 											_GridInputFilename(GridInputFilename)
 {
@@ -43,17 +40,17 @@ void Grid2::LoadGrid()
 void Grid2::InitializeMatrix(std::ifstream &FileID)
 {
 	// Read in IMax and JMax
-	FileID >> _IMax;
-	FileID >> _JMax;
-	printf("IMAX = %d, JMAX = %d\n", _IMax, _JMax);
+	FileID >> IMax;
+	FileID >> JMax;
+	printf("IMAX = %d, JMAX = %d\n", IMax, JMax);
 
 	// Allocate memory for the arrays
-	_XMatrix.Initialize(_IMax, _JMax);
-	_YMatrix.Initialize(_IMax, _JMax);
+	X.Initialize(IMax, JMax);
+	Y.Initialize(IMax, JMax);
 
 	// Read in the X and Y coordinates
-	ReadCoordinateMatrix(FileID, OUT _XMatrix);
-	ReadCoordinateMatrix(FileID, OUT _YMatrix);
+	ReadCoordinateMatrix(FileID, OUT X);
+	ReadCoordinateMatrix(FileID, OUT Y);
 }
 
 // Read in array for a given coordinate direction
@@ -61,13 +58,13 @@ void Grid2::ReadCoordinateMatrix(std::ifstream &FileID, Matrix &InputMatrix)
 {
 	double Value;
 	// Populate array from file
-	for (int j = 0; j < _JMax; j++)
+	for (int j = 0; j < JMax; j++)
 	{
-		for (int i = 0; i < _IMax; i++)
+		for (int i = 0; i < IMax; i++)
 		{
 			FileID >> Value;
 			InputMatrix[i][j] = Value;
-			printf("X(%d,%d) = %f\n", i, j, InputMatrix[i][j]);
+			//TEST printf("X(%d,%d) = %f\n", i, j, InputMatrix[i][j]);
 		}
 	}
 

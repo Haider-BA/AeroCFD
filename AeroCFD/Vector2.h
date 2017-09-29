@@ -10,16 +10,41 @@ public:
 	// Default constructor
 	Vector2();
 
+	// Specified constructor
+	Vector2(double InputX, double InputY);
+
 	// Destructor
 	~Vector2();
 
-	// Access to the array
-	double& operator[](int Index);
+	// Vector addition
+	Vector2 operator+(const Vector2& Vector) const;	
 
+	// Vector subtraction
+	Vector2 operator-(const Vector2& Vector) const;	
+
+	// Scalar multiplication
+	Vector2 operator*(const double Scalar) const;	
+
+	// Magnitude squared
+	double Length2() const;	
+
+	// Magnitude
+	double Length() const;	
+
+	// Normalize
+	void Normalize();	
+
+	// Dot product
+	double Dot(const Vector2& Vector) const;	
+
+	// Cross product
+	double Cross(const Vector2& Vector) const;	
+
+	// Variables
+	double x;
+	double y;
 private:
-	double _x;
-	double _y;
-
+	
 };
 
 #endif

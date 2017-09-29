@@ -9,9 +9,6 @@
 class Grid2
 {
 public:
-	// Default constructor
-	Grid2();
-
 	// Constructor with an input file
 	Grid2(std::string GridInputFilename);
 
@@ -30,6 +27,14 @@ public:
 	// Elliptic grid generation
 	void EllipticGridGeneration();
 
+	// Grid dimensions
+	int IMax;
+	int JMax;
+
+	// Grid matrix
+	Matrix X;
+	Matrix Y;
+
 private:
 	// Initializes and sets up the matrices
 	void InitializeMatrix(std::ifstream &FileID);
@@ -39,17 +44,5 @@ private:
 
 	// Grid input filename
 	std::string _GridInputFilename;
-
-	// Grid dimensions
-	int _IMax;
-	int _JMax;
-
-	// Grid indices
-	int _i, _j;
-
-	// Grid matrix
-	Matrix _XMatrix;
-	Matrix _YMatrix;
-
 };
 #endif
