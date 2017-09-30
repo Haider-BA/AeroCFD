@@ -17,8 +17,13 @@ int main(int argc, char* argv[])
 		}
 	}	
 
-	BoundaryCondition BC(Grid.IMax, Grid.JMax);
-	BC.LoadBoundaryConditions("./BC");
+	
+	BoundaryCondition Boundary(Grid.IMax, Grid.JMax);
+	Boundary.LoadBoundaryConditions("./BC");
+
+	Grid.TransfiniteInterpolation(Boundary);
+
+	Grid.WriteGrid("n0012_alg.grid");
 	
 	std::cout << "Press any key to continue\n";
 	std::getchar();

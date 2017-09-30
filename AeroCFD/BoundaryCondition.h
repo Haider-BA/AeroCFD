@@ -35,6 +35,9 @@ private:
 
 	// Read in boundary condition file
 	void ReadBoundaryConditionFile(std::ifstream &FileID, int f);
+
+	// Checks for opening BC files
+	void CheckFileIsOpen(std::ifstream &FileID, std::string BCFile);
 };
 
 #endif

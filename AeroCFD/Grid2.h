@@ -22,7 +22,7 @@ public:
 	void WriteGrid(std::string GridOutputFilename);
 
 	// Transfinite interpolation
-	void TransfiniteInterpolation(BoundaryCondition* BC);
+	void TransfiniteInterpolation(const BoundaryCondition& Boundary);
 
 	// Elliptic grid generation
 	void EllipticGridGeneration();
@@ -41,6 +41,16 @@ private:
 
 	// Reads in the matrix for a coordinate direction (X, Y, etc.)
 	void ReadCoordinateMatrix(std::ifstream &FileID, Matrix& InputMatrix);
+
+	// Fill in boundaries of the grid matrices
+	void FillGridBoundary(const BoundaryCondition& Boundary);
+
+	// Write out the given coordinate matrix
+	void PrintCoordinateMatrix(std::ofstream &FileID, Matrix& OutputMatrix);
+
+	// Checks for opening the grid file
+	void CheckFileIsOpen(std::ifstream &FileID);
+	void CheckFileIsOpen(std::ofstream &FileID);
 
 	// Grid input filename
 	std::string _GridInputFilename;

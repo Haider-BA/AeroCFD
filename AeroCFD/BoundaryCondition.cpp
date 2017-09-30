@@ -8,10 +8,10 @@ BoundaryCondition::BoundaryCondition(int IMax, int JMax) :
 																_JMax(JMax)
 {
 	BC.resize(_NumberEdges);
-	BC[0].resize(_IMax);
-	BC[1].resize(_JMax);
-	BC[2].resize(_IMax);
-	BC[3].resize(_JMax);
+	BC[0].resize(_JMax);
+	BC[1].resize(_IMax);
+	BC[2].resize(_JMax);
+	BC[3].resize(_IMax);
 }
 
 BoundaryCondition::~BoundaryCondition()
@@ -19,18 +19,18 @@ BoundaryCondition::~BoundaryCondition()
 
 void BoundaryCondition::LoadBoundaryConditions(std::string BCDirectory)
 {
+	std::cout << "Opening Boundary Condition files:\n";
 	for (int f = 0; f < _NumberEdges; f++)
 	{
-		std::ifstream FileID(BCDirectory + "/" + _BCFiles[f] + ".BC");
-		if (FileID.is_open())
-		{
-			std::cout << "Opening BC File: " << (BCDirectory + "/" + _BCFiles[f] + ".BC") << "\n";
-			ReadBoundaryConditionFile(FileID, f);
-		}
-		else
-		{
-			std::cout << "Unable to open " << (BCDirectory + "/" + _BCFiles[f] + ".BC") << "\n";
-		}
+		// Loop through boundary files (I=1, J=1, IMax, and JMax)
+		std::string BCFile = BCDirectory + "/" + _BCFiles[f] + ".BC";
+		std::ifstream FileID(BCFile);
+
+		// Verify file is open and read in boundary file
+		CheckFileIsOpen(FileID, BCFile);
+		std::cout << "  " << BCFile << "\n";
+		ReadBoundaryConditionFile(FileID, f);
+
 	}
 	return;
 }
@@ -39,12 +39,18 @@ void BoundaryCondition::ReadBoundaryConditionFile(std::ifstream &FileID, int f)
 {
 	int NumberElements;
 	FileID >> NumberElements;
-	std::cout << "NumberElements = " << NumberElements << "\n";
 	for (int i = 0; i < NumberElements; i++)
 	{
 		FileID >> BC[f][i].x >> BC[f][i].y;
-		std::cout << "(x,y) = (" << BC[f][i].x << ", "<< BC[f][i].y << ")\n";
+		//TEST std::cout << "(x,y) = (" << BC[f][i].x << ", "<< BC[f][i].y << ")\n";
 	}
-	// Cleanup
-	FileID.close();
+}
+
+void BoundaryCondition::CheckFileIsOpen(std::ifstream &FileID, std::string BCFile)
+{
+	if (!FileID.is_open())
+	{
+		std::cout << "  Error!: Unable to open " << BCFile << ".\n";
+		exit(EXIT_FAILURE);
+	}
 }
