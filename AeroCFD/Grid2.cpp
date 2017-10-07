@@ -67,9 +67,6 @@ void Grid2::TransfiniteInterpolation(const BoundaryCondition& Boundary)
 	Y.TransfiniteInterpolation();
 }
 
-void Grid2::EllipticGridGeneration()
-{}
-
 void Grid2::InitializeMatrix(std::ifstream &FileID)
 {
 	// Read in IMax and JMax
@@ -134,8 +131,8 @@ void Grid2::PrintCoordinateMatrix(std::ofstream &FileID, Matrix& OutputMatrix) c
 		{
 			FileID << OutputMatrix[i][j] << " ";
 		}
+		FileID << "\n";
 	}
-	FileID << "\n";
 	return;
 }
 

@@ -4,6 +4,7 @@
 
 #include "Matrix.h"
 #include "Grid2.h"
+#include "EllipticParameters.h"
 
 class Elliptic
 {
@@ -20,18 +21,23 @@ private:
 	Matrix _P;
 	Matrix _Q;
 
-	/// Input parameters (default)
-	double _WallAngle = 90.;
-	double _WallSpace = 4.0E-6;
-	double _AngleDamping = 0.1;
-	double _SpaceDamping = 0.15;
-	double _AngleDecay = 1.0;
-	double _SpaceDecay = 1.0;
-	double _OverrelaxationFactor = 1.4;
-	int _MaxIterations = 30;
-	int _SmoothIterations = 100;
-	double _Tolerance = 1.0E-5;
-	double _Residual = 0.;
+	EllipticParameters InputParams;
+
+	/// 1st derivative approximations
+	double _XI = 0.;
+	double _XJ = 0.;
+	double _YI = 0.;
+	double _YJ = 0.;
+
+	/// 2nd derivative approximations
+	double _XII = 0.;
+	double _XJJ = 0.;
+	double _YII = 0.;
+	double _YJJ = 0.;
+
+	/// Mixed derivative approximations
+	double _XIJ = 0.;
+	double _YIJ = 0.;
 
 	/// Source terms
 	void ZeroSourceTerms();
@@ -42,10 +48,19 @@ private:
 	void JMinSourceTerms(Grid2& Grid, int i);
 	double AngleResidual(double dxi, double dyi, double dxj, double dyj);
 	double SpaceResidual(double dx, double dy);
+	void PowerLawInterp();
 
 	/// Relaxation schemes
-	void SuccessiveOverRelaxation();
-	void GaussSeidel();
+	void LaplaceSmoothing(Grid2& Grid);
+	void EllipticSmoothing(Grid2& Grid);
+	void SuccessiveOverRelaxation(Grid2& Grid);
+	void GaussSeidel(Grid2& Grid);
+
+	/// Finite difference approximations
+	void FirstDerivatives(Grid2& Grid, int i, int j);
+	void SecndDerivatives(Grid2& Grid, int i, int j);
+	void MixedDerivatives(Grid2& Grid, int i, int j);
+
 };
 
 #endif

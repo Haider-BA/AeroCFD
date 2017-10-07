@@ -141,6 +141,7 @@
   <ItemGroup>
     <ClCompile Include="BoundaryCondition.cpp" />
     <ClCompile Include="Elliptic.cpp" />
+    <ClCompile Include="EllipticParameters.cpp" />
     <ClCompile Include="Grid2.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Matrix.cpp" />
@@ -150,6 +151,7 @@
   <ItemGroup>
     <ClInclude Include="BoundaryCondition.h" />
     <ClInclude Include="Elliptic.h" />
+    <ClInclude Include="EllipticParameters.h" />
     <ClInclude Include="Grid2.h" />
     <ClInclude Include="Matrix.h" />
     <ClInclude Include="Proxy.h" />

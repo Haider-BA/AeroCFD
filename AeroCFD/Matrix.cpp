@@ -10,7 +10,6 @@ Matrix::Matrix()
 Matrix::~Matrix()
 {
 	// Clean up memory from the Heap
-	std::cout << "Matrix deallocation\n";
 	for (int i = 0; i <= _Rows; i++)
 	{
 		delete[] _Array[i];

@@ -30,9 +30,6 @@ public:
 	void TransfiniteInterpolation();
 	void TransfiniteInterpolation(const BoundaryCondition& Boundary);
 
-	// Elliptic grid generation
-	void EllipticGridGeneration();
-
 	// Grid dimensions
 	int IMax;
 	int JMax;

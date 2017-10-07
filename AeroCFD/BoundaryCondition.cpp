@@ -15,9 +15,7 @@ BoundaryCondition::BoundaryCondition(int IMax, int JMax) :
 }
 
 BoundaryCondition::~BoundaryCondition()
-{
-	std::cout << "BC Destructor\n";
-}
+{}
 
 void BoundaryCondition::LoadBoundaryConditions(std::string BCDirectory)
 {
