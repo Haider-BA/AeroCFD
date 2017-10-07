@@ -8,14 +8,16 @@ BoundaryCondition::BoundaryCondition(int IMax, int JMax) :
 																_JMax(JMax)
 {
 	BC.resize(_NumberEdges);
-	BC[0].resize(_JMax);
-	BC[1].resize(_IMax);
-	BC[2].resize(_JMax);
-	BC[3].resize(_IMax);
+	BC[0].resize(_JMax + 1);
+	BC[1].resize(_IMax + 1);
+	BC[2].resize(_JMax + 1);
+	BC[3].resize(_IMax + 1);
 }
 
 BoundaryCondition::~BoundaryCondition()
-{}
+{
+	std::cout << "BC Destructor\n";
+}
 
 void BoundaryCondition::LoadBoundaryConditions(std::string BCDirectory)
 {
@@ -37,7 +39,7 @@ void BoundaryCondition::LoadBoundaryConditions(std::string BCDirectory)
 
 void BoundaryCondition::ReadBoundaryConditionFile(std::ifstream &FileID, int f)
 {
-	int NumberElements;
+	int NumberElements; // Note: in general number of elements will be (IMAX OR JMAX) + 1
 	FileID >> NumberElements;
 	for (int i = 0; i < NumberElements; i++)
 	{

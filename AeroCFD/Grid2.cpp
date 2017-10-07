@@ -6,7 +6,17 @@
 
 #define OUT
 
-// Constructor
+// Constructor for empty grid
+Grid2::Grid2(int InputIMax, int InputJMax) :
+											IMax(InputIMax),
+											JMax(InputJMax)
+{
+	// Allocate memory for the arrays
+	X.Initialize(IMax, JMax);
+	Y.Initialize(IMax, JMax);
+}
+
+// Constructor with existing grid file
 Grid2::Grid2(std::string GridInputFilename) :
 											_GridInputFilename(GridInputFilename)
 {
@@ -42,37 +52,23 @@ void Grid2::WriteGrid(std::string GridOutputFilename)
 	PrintCoordinateMatrix(FileID, Y);
 }
 
+// Perform Linear Transfinite Interpolation with current boundaries
+void Grid2::TransfiniteInterpolation()
+{
+	X.TransfiniteInterpolation();
+	Y.TransfiniteInterpolation();
+}
+
 // Perform Linear Transfinite Interpolation
 void Grid2::TransfiniteInterpolation(const BoundaryCondition& Boundary)
 {
-	for (int i = 1; i < IMax - 1; i++)
-	{
-		for (int j = 1; j < JMax - 1; j++)
-		{
-			double dI = (double(IMax) - double(i)) / double(IMax);
-			double dJ = (double(JMax) - double(j)) / double(JMax);
-			double JJ = double(j) / double(JMax);
-			double II = double(i) / double(IMax);
-			//TEST printf("(%d,%d) = %f, %f, %f, %f\n", i, j, dI, dJ, JJ, II);
-			X[i][j] = dI*Boundary.BC[0][j].x + 
-					  II*Boundary.BC[2][j].x + 
-					  dJ*Boundary.BC[1][i].x +
-					  JJ*Boundary.BC[3][i].x -
-				(	  dI*dJ*Boundary.BC[1][0].x +
-					  II*dJ*Boundary.BC[2][0].x +
-					  JJ*dI*Boundary.BC[0][JMax - 1].x +
-					  II*JJ*Boundary.BC[3][IMax - 1].x	);
-			Y[i][j] = dI*Boundary.BC[0][j].y +
-					  II*Boundary.BC[2][j].y +
-					  dJ*Boundary.BC[1][i].y +
-					  JJ*Boundary.BC[3][i].y -
-				(	  dI*dJ*Boundary.BC[1][0].y +
-					  II*dJ*Boundary.BC[2][0].y +
-					  JJ*dI*Boundary.BC[0][JMax - 1].y +
-					  II*JJ*Boundary.BC[3][IMax - 1].y	);
-		}
-	}
+	FillGridBoundary(Boundary);
+	X.TransfiniteInterpolation();
+	Y.TransfiniteInterpolation();
 }
+
+void Grid2::EllipticGridGeneration()
+{}
 
 void Grid2::InitializeMatrix(std::ifstream &FileID)
 {
@@ -95,9 +91,9 @@ void Grid2::ReadCoordinateMatrix(std::ifstream &FileID, Matrix &InputMatrix)
 {
 	double Value;
 	// Populate array from file
-	for (int j = 0; j < JMax; j++)
+	for (int j = 0; j <= JMax; j++)
 	{
-		for (int i = 0; i < IMax; i++)
+		for (int i = 0; i <= IMax; i++)
 		{
 			FileID >> Value;
 			InputMatrix[i][j] = Value;
@@ -111,30 +107,30 @@ void Grid2::ReadCoordinateMatrix(std::ifstream &FileID, Matrix &InputMatrix)
 void Grid2::FillGridBoundary(const BoundaryCondition& Boundary)
 {
 	// Fill I = 1 and I = IMax boundaries
-	for (int j = 0; j < JMax; j++)
+	for (int j = 0; j <= JMax; j++)
 	{
-		X[0		  ][j] = Boundary.BC[0][j].x;
-		Y[0		  ][j] = Boundary.BC[0][j].y;
-		X[IMax - 1][j] = Boundary.BC[2][j].x;
-		Y[IMax - 1][j] = Boundary.BC[2][j].y;
+		X[0	  ][j] = Boundary.BC[0][j].x;
+		Y[0   ][j] = Boundary.BC[0][j].y;
+		X[IMax][j] = Boundary.BC[2][j].x;
+		Y[IMax][j] = Boundary.BC[2][j].y;
 	}
 
 	// Fill J = 1 and J = JMax boundaries
 	for (int i = 0; i < IMax; i++)
 	{
-		X[i][0		 ] = Boundary.BC[1][i].x;
-		Y[i][0		 ] = Boundary.BC[1][i].y;
-		X[i][JMax - 1] = Boundary.BC[3][i].x;
-		Y[i][JMax - 1] = Boundary.BC[3][i].y;
+		X[i][0	 ] = Boundary.BC[1][i].x;
+		Y[i][0	 ] = Boundary.BC[1][i].y;
+		X[i][JMax] = Boundary.BC[3][i].x;
+		Y[i][JMax] = Boundary.BC[3][i].y;
 	}
 }
 
-void Grid2::PrintCoordinateMatrix(std::ofstream &FileID, Matrix& OutputMatrix)
+void Grid2::PrintCoordinateMatrix(std::ofstream &FileID, Matrix& OutputMatrix) const
 {
 	// Print matrix to file
-	for (int j = 0; j < JMax; j++)
+	for (int j = 0; j <= JMax; j++)
 	{
-		for (int i = 0; i < IMax; i++)
+		for (int i = 0; i <= IMax; i++)
 		{
 			FileID << OutputMatrix[i][j] << " ";
 		}
@@ -144,7 +140,7 @@ void Grid2::PrintCoordinateMatrix(std::ofstream &FileID, Matrix& OutputMatrix)
 }
 
 /// Overloads for checking if the grid input/output files are opened
-void Grid2::CheckFileIsOpen(std::ifstream & FileID)
+void Grid2::CheckFileIsOpen(const std::ifstream & FileID) const
 {
 	if (!FileID.is_open())
 	{
@@ -153,7 +149,7 @@ void Grid2::CheckFileIsOpen(std::ifstream & FileID)
 	}
 }
 
-void Grid2::CheckFileIsOpen(std::ofstream & FileID)
+void Grid2::CheckFileIsOpen(const std::ofstream & FileID) const
 {
 	if (!FileID.is_open())
 	{

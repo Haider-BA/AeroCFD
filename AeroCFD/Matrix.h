@@ -14,6 +14,9 @@ public:
 	
 	// Initialize Matrix
 	void Initialize(int Rows, int Columns);
+
+	// Interpolation to the interior nodes using transfinite interpolation
+	void TransfiniteInterpolation();
 	
 	// Access to the matrix
 	Proxy& operator[](int Index);
@@ -21,9 +24,6 @@ public:
 	// Access matrix dimensions
 	int GetRows() const;
 	int GetColumns() const;
-
-	// Gauss Seidel
-	void GaussSeidel(void(*InputFunction) (int i, int j));
 
 private:
 	// Dimensions
