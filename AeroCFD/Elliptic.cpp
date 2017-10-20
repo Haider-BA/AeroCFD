@@ -23,7 +23,7 @@ void Elliptic::GridGeneration(Grid2 & Grid)
 	ZeroSourceTerms();
 	if (InputParams.LaplaceIterations)
 	{
-		std::cout << "  Smoothing the Laplace Equations:\n";
+		std::cout << "   Smoothing the Laplace Equations:\n";
 		LaplaceSmoothing(Grid);
 	}
 
@@ -167,36 +167,38 @@ void Elliptic::LaplaceSmoothing(Grid2& Grid)
 {
 	for (int n = 1; n <= InputParams.LaplaceIterations; n++)
 	{
-		std::cout << "  Iteration " << n << "\n";
+		std::cout << "   Iteration " << n << "\n";
 		SuccessiveOverRelaxation(Grid);
 	}
 }
 
 void Elliptic::EllipticSmoothing(Grid2& Grid)
 {
-	std::cout << "  Smoothing the Poisson equations with Source Terms:\n";
+	std::cout << "   Smoothing the Poisson equations with Source Terms:\n";
 	for (int n = 1; n <= InputParams.PoissonIterations; n++)
 	{
-		std::cout << "  Iteration " << n << "\n";
+		std::cout << "   Iteration " << n << "\n";
 		ComputeSourceTerms(Grid);
-		//_P.TransfiniteInterpolation();
-		//_Q.TransfiniteInterpolation();
-		PowerLawInterp();
+		_P.TransfiniteInterpolation();
+		_Q.TransfiniteInterpolation();
+		//PowerLawInterp();
 		SuccessiveOverRelaxation(Grid);
 	}
 }
 
-// TODO Refactor
 // TODO Print results
 void Elliptic::SuccessiveOverRelaxation(Grid2& Grid)
 {
-	double ResX0 = 0.;
-	double ResY0 = 0.;
+	_Xrms0 = 0.;
+	_Yrms0 = 0.;
+	double XResidual = 0.;
+	double YResidual = 0.;
+	double Coef = 0.;
 
 	for (int n = 1; n <= InputParams.RelaxationIterations; n++)
 	{
-		double ResX = 0.;
-		double ResY = 0.;
+		_Xrms = 0.;
+		_Yrms = 0.;
 
 		for (int i = 1; i < _IMax; i++)
 		{
@@ -206,38 +208,17 @@ void Elliptic::SuccessiveOverRelaxation(Grid2& Grid)
 				SecndDerivatives(Grid, i, j);
 				MixedDerivatives(Grid, i, j);
 
-				double Alpha = _XJ*_XJ + _YJ*_YJ;
-				double Gamma = _XI*_XI + _YI*_YI;
-				double Beta = _XI*_XJ + _YI*_YJ;
-				double Coef = 2.*(Alpha + Gamma);
-
-				double XResidual = Alpha*(_XII + _P[i][j] * _XI) -
-					2.0*Beta*_XIJ +
-					Gamma*(_XJJ + _Q[i][j] * _XJ);
-
-				double YResidual = Alpha*(_YII + _P[i][j] * _YI) -
-					2.0*Beta*_YIJ +
-					Gamma*(_YJJ + _Q[i][j] * _YJ);
+				ComputeResiduals(i, j, OUT XResidual, OUT YResidual, OUT Coef);
 
 				// Update residual tracking for convergence
-				ResX += XResidual*XResidual;
-				ResY += YResidual*YResidual;
+				_Xrms += XResidual*XResidual;
+				_Yrms += YResidual*YResidual;
 
 				Grid.X[i][j] += InputParams.OverrelaxationFactor*XResidual / Coef;
 				Grid.Y[i][j] += InputParams.OverrelaxationFactor*YResidual / Coef;
 			}
 		}
-
-		if (n == 0)
-		{
-			double ResX0 = ResX;
-			double ResY0 = ResY;
-		}
-		else
-		{
-			ResX = ResX / ResX0;
-			ResY = ResY / ResY0;
-		}
+		if (HasConverged(n)) {return;}		
 	}
 }
 
@@ -270,3 +251,41 @@ void Elliptic::MixedDerivatives(Grid2& Grid, int i, int j)
 		Grid.Y[i - 1][j + 1] + Grid.Y[i - 1][j - 1]);
 }
 
+void Elliptic::ComputeResiduals(int i, int j, double& XResidual, double& YResidual, double& Coef)
+{
+	double Alpha = _XJ*_XJ + _YJ*_YJ;
+	double Gamma = _XI*_XI + _YI*_YI;
+	double Beta  = _XI*_XJ + _YI*_YJ;
+	Coef = 2.*(Alpha + Gamma);
+
+	XResidual = Alpha*(_XII + _P[i][j] * _XI) -
+		2.0*Beta*_XIJ +
+		Gamma*(_XJJ + _Q[i][j] * _XJ);
+
+	YResidual = Alpha*(_YII + _P[i][j] * _YI) -
+		2.0*Beta*_YIJ +
+		Gamma*(_YJJ + _Q[i][j] * _YJ);
+}
+
+bool Elliptic::HasConverged(int n)
+{
+	if (n == 0)
+	{
+		_Xrms0 = _Xrms;
+		_Yrms0 = _Yrms;
+	}
+	else
+	{
+		_Xrms = _Xrms / _Xrms0;
+		_Yrms = _Yrms / _Yrms0;
+	}
+
+	if (_Xrms < InputParams.Tolerance && _Yrms < InputParams.Tolerance)
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}

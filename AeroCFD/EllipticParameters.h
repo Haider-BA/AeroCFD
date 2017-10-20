@@ -21,7 +21,6 @@ public:
 	int LaplaceIterations = 0;
 	int RelaxationIterations = 30;
 	double Tolerance = 1.0E-5;
-	double Residual = 0.;
 
 private:
 

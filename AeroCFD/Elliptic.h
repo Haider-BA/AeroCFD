@@ -39,6 +39,12 @@ private:
 	double _XIJ = 0.;
 	double _YIJ = 0.;
 
+	/// Residuals
+	double _Xrms0 = 0.;
+	double _Yrms0 = 0.;
+	double _Xrms = 0.;
+	double _Yrms = 0.;
+
 	/// Source terms
 	void ZeroSourceTerms();
 	void ComputeSourceTerms(Grid2& Grid);
@@ -61,6 +67,9 @@ private:
 	void SecndDerivatives(Grid2& Grid, int i, int j);
 	void MixedDerivatives(Grid2& Grid, int i, int j);
 
+	/// Residual handling
+	void ComputeResiduals(int i, int j, double& XResidual, double& YResidual, double& Coef);
+	bool HasConverged(int n);
 };
 
 #endif

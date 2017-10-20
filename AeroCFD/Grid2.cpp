@@ -34,7 +34,7 @@ void Grid2::LoadGrid()
 
 	// Verify file is open then load file into the grid matrices
 	CheckFileIsOpen(FileID);
-	std::cout << "Reading grid file: " << _GridInputFilename << "\n";	
+	std::cout << " Reading grid file: " << _GridInputFilename << "\n\n";	
 	InitializeMatrix(FileID);
 
 	return;
@@ -46,7 +46,7 @@ void Grid2::WriteGrid(std::string GridOutputFilename)
 	
 	// Verify file is open then load file into the grid matrices
 	CheckFileIsOpen(FileID);
-	std::cout << "Writing grid to file: " << GridOutputFilename << "\n";
+	std::cout << " Writing grid to file: " << GridOutputFilename << "\n\n";
 	FileID << IMax << " " << JMax << "\n";
 	PrintCoordinateMatrix(FileID, X);
 	PrintCoordinateMatrix(FileID, Y);
@@ -72,7 +72,7 @@ void Grid2::InitializeMatrix(std::ifstream &FileID)
 	// Read in IMax and JMax
 	FileID >> IMax;
 	FileID >> JMax;
-	printf("  with IMax = %d, JMax = %d\n", IMax, JMax);
+	printf("   with IMax = %d, JMax = %d\n\n", IMax, JMax);
 
 	// Allocate memory for the arrays
 	X.Initialize(IMax, JMax);
@@ -94,7 +94,6 @@ void Grid2::ReadCoordinateMatrix(std::ifstream &FileID, Matrix &InputMatrix)
 		{
 			FileID >> Value;
 			InputMatrix[i][j] = Value;
-			//TEST printf("X(%d,%d) = %f\n", i, j, InputMatrix[i][j]);
 		}
 	}
 	return;
@@ -141,7 +140,7 @@ void Grid2::CheckFileIsOpen(const std::ifstream & FileID) const
 {
 	if (!FileID.is_open())
 	{
-		std::cout << "  Error!: Unable to open grid file.\n";
+		std::cout << " Error!: Unable to open grid file.\n";
 		exit(EXIT_FAILURE);
 	}
 }
@@ -150,7 +149,7 @@ void Grid2::CheckFileIsOpen(const std::ofstream & FileID) const
 {
 	if (!FileID.is_open())
 	{
-		std::cout << "  Error!: Unable to open grid file.\n";
+		std::cout << " Error!: Unable to open grid file.\n";
 		exit(EXIT_FAILURE);
 	}
 }
